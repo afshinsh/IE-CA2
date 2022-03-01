@@ -1,5 +1,5 @@
+import Main.Commands.GetMoviesList;
 import Main.Main;
-import Model.Movie;
 import Storage.Storage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,8 +7,6 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import io.javalin.Javalin;
-
-import java.util.List;
 
 public class Startup {
 
@@ -24,10 +22,16 @@ public class Startup {
                 .asJson();
         HttpResponse <JsonNode> userResponse = Unirest.get("http://138.197.181.131:5000/api/users")
                 .asJson();
+        HttpResponse <JsonNode> commentResponse = Unirest.get("http://138.197.181.131:5000/api/comments")
+                .asJson();
+
         ObjectMapper objectMapper = new ObjectMapper();
         Storage.Database.Movies =  objectMapper.readValue(movieResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.Actors =  objectMapper.readValue(actorResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.Users =  objectMapper.readValue(userResponse.getBody().toString(), new TypeReference<>(){});
+        /*Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});*/
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
+
+        app.get("/movies", GetMoviesList::GetHtmlResponse);
     }
 }
