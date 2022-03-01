@@ -259,6 +259,20 @@ public class Storage {
             }
             return -1;
         }
+        public static ArrayList<Movie> GetTotalMovieActedIn(int actorId) {
+            ArrayList<Movie> movieList = new ArrayList<>();
+            for (Movie movie : Movies) {
+                var arr = movie.cast.toArray();
+                for (int i = 0; i < movie.cast.size(); i++) {
+                    if (Integer.valueOf(arr[i].toString()) == actorId){
+                        movieList.add(movie);
+                        break;
+                    }
+                }
+            }
+            return movieList;
+
+        }
     }
 
 }
