@@ -37,4 +37,68 @@ public class MovieController {
         }
         context.html(doc.toString());
     }
+
+    public static void GetMovieById(Context context) throws IOException {
+        var movieId = context.pathParam("movie_id");
+        var result =  Storage.Database.GetMovie(Integer.parseInt(movieId));
+
+        File htmlResponse = new File("src\\main\\resources\\movie.html");
+        Document doc = Jsoup.parse(htmlResponse, null);
+
+        doc.getElementById("name").append(result.Name);
+        doc.getElementById("summary").append(result.Summary);
+        doc.getElementById("releaseDate").append(result.ReleaseDate);
+        doc.getElementById("director").append(result.Director);
+        doc.getElementById("writers").append(String.valueOf(result.Writers));
+        doc.getElementById("genres").append(String.valueOf(result.Genres));
+        String CastName = "";
+        for(int i = 0; i < result.Cast.size(); i++){
+            CastName +=  result.Cast.get(i).Name;
+            if(i != result.Cast.size() - 1)
+                CastName += ",";
+
+        }
+        doc.getElementById("cast").append(CastName);
+        doc.getElementById("imdbRate").append(String.valueOf(result.ImdbRate));
+        doc.getElementById("rating").append(String.valueOf(result.ImdbRate));
+        doc.getElementById("duration").append(String.valueOf(result.Duration));
+        doc.getElementById("ageLimit").append(String.valueOf(result.AgeLimit));
+
+
+
+        Element table = doc.getElementById("cmTable");
+        for (var item : result.Comments){
+            String row = "<tr>\n";
+
+            row += "<td>" + item.nickName + "</td>\n";
+            row += "<td>" + item.Text + "</td>\n";
+            var like = "<form action=\"\" method=\"POST\">\n" +
+                    "            <label for=\"\">" + item.like +  "</label>\n" +
+                    "            <input\n" +
+                    "              id=\"form_comment_id\"\n" +
+                    "              type=\"hidden\"\n" +
+                    "              name=\"comment_id\"\n" +
+                    "              value= " + item.like + "\n" +
+                    "            />\n" +
+                    "            <button type=\"submit\">like</button>\n" +
+                    "          </form>";
+
+            row += "<td>" + like  + "</td>\n";
+            var dislike = "<form action=\"\" method=\"POST\">\n" +
+                    "            <label for=\"\">" + item.dislike +  "</label>\n" +
+                    "            <input\n" +
+                    "              id=\"form_comment_id\"\n" +
+                    "              type=\"hidden\"\n" +
+                    "              name=\"comment_id\"\n" +
+                    "              value=" + item.dislike + "\n" +
+                    "            />\n" +
+                    "            <button type=\"submit\">dislike</button>\n" +
+                    "          </form>";
+            row += "<td>" + dislike  + "</td>\n";
+            row += "</tr>";
+            table.append(row);
+        }
+
+        context.html(doc.toString());
+    }
 }

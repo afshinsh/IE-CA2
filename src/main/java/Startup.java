@@ -31,11 +31,10 @@ public class Startup {
         Storage.Database.Movies =  objectMapper.readValue(movieResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.Actors =  objectMapper.readValue(actorResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.Users =  objectMapper.readValue(userResponse.getBody().toString(), new TypeReference<>(){});
-        /*Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});*/
+        Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
         app.get("/movies", MovieController::GetAllMovie);
-
-        app.get("/actors/{actor_id}", ActorController::GetActorById);
+        app.get("/movies/{movieId}", MovieController::GetMovieById);
     }
 }
