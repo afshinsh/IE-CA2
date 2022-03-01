@@ -35,6 +35,14 @@ public class Startup {
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
         app.get("/movies", MovieController::GetAllMovie);
-        app.get("/movies/{movieId}", MovieController::GetMovieById);
+        app.get("/movies/{movie_id}", MovieController::GetMovieById);
+        app.post("/rateMovie", ctx -> {
+
+            String quantity = ctx.formParam("quantity");
+            String user_id = ctx.formParam("user_id");
+            System.out.println("rate " + quantity);
+            System.out.println("id: " + user_id);
+            ctx.result("success");
+        });
     }
 }

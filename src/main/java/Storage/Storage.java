@@ -228,7 +228,7 @@ public class Storage {
             return result;
         }
 
-        private static Actor GetActorById(Integer actorId) {
+        public static Actor GetActorById(Integer actorId) {
             for(Actor actor : Actors){
                 if(actor.id == actorId)
                     return actor;

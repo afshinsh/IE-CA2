@@ -15,7 +15,11 @@ import java.util.List;
 
 public class ActorController {
 
+
+
+
     public static void GetActorById(Context context) throws IOException {
+
         int actorId = Integer.parseInt(context.pathParam("actor_id"));
         Actor actor = Storage.Database.GetActorById(actorId);
         ArrayList<Movie> movieActedList = Storage.Database.GetTotalMovieActedIn(actorId);
