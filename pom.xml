@@ -13,6 +13,7 @@
             <artifactId>javalin</artifactId>
             <version>4.3.0</version>
         </dependency>
+        <!--jkbk-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
