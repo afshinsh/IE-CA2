@@ -1,3 +1,4 @@
+import Controllers.MovieController;
 import Main.Commands.GetMoviesList;
 import Main.Main;
 import Storage.Storage;
@@ -32,6 +33,6 @@ public class Startup {
         /*Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});*/
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
-        app.get("/movies", GetMoviesList::GetHtmlResponse);
+        app.get("/movies", MovieController::GetAllMovie);
     }
 }
