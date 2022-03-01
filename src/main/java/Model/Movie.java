@@ -16,6 +16,7 @@ public class Movie {
         this.imdbRate = imdbRate;
         this.duration = duration;
         this.ageLimit = ageLimit;
+        this.rating = imdbRate;
         rates = new ArrayList<>();
     }
     public Movie(){
@@ -30,35 +31,36 @@ public class Movie {
     public ArrayList<String> genres;
     public ArrayList<Integer> cast;
     public double imdbRate;
+    public double rating;
     public long duration;
     public int ageLimit;
 
     public ArrayList<Rate> rates;
 
 
-    private double getImdbRate(){
+    private double getRating(){
         double sum = imdbRate;
         for (int i = 0; i < rates.size(); i++) {
             sum += rates.get(i).Score;
         }
         return sum / (rates.size() + 1) ;
     }
-    private void updateImdbRate(int before , int after){
-        double sum = imdbRate * (rates.size() + 1);
+    private void updateRating(int before , int after){
+        double sum = rating * (rates.size() + 1);
         sum = sum - before + after;
-        imdbRate = sum / (rates.size() + 1);
+        rating = sum / (rates.size() + 1);
     }
 
     public void RateMovie(Rate rate){
 
         for (Rate rt : rates)
             if(rt.UserEmail.equals(rate.UserEmail)){
-                updateImdbRate(rt.Score, rate.Score);
+                updateRating(rt.Score, rate.Score);
                 rt = rate;
                 return;
             }
         rates.add(rate);
-        imdbRate = getImdbRate();
+        rating = getRating();
     }
 
 }

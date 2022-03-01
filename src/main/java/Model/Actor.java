@@ -12,4 +12,5 @@ public class Actor {
     public String name;
     public String birthDate;
     public String nationality;
+
 }

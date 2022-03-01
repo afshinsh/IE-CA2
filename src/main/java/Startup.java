@@ -1,3 +1,4 @@
+import Controllers.ActorController;
 import Controllers.MovieController;
 import Main.Commands.GetMoviesList;
 import Main.Main;
@@ -34,5 +35,7 @@ public class Startup {
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
         app.get("/movies", MovieController::GetAllMovie);
+
+        app.get("/actors/{actor_id}", ActorController::GetActorById);
     }
 }

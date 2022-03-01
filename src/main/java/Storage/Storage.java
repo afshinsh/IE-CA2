@@ -7,22 +7,22 @@ import Views.CastView;
 import Views.CommentView;
 import Views.SingleMovieView;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.*;
 
 public class Storage {
 
-    static public class Database{
+    static public class Database {
         public static List<Movie> Movies = new ArrayList<>();
         public static List<User> Users = new ArrayList<>();
         public static List<Actor> Actors = new ArrayList<>();
-        public static List<Comment> Comments = new ArrayList<Comment>();
-        public static List<Vote> Votes = new ArrayList<Vote>();
+        public static List<Comment> Comments = new ArrayList<>();
+        public static List<Vote> Votes = new ArrayList<>();
         public static int UserId = 1;
         public static int CommentId = 1;
-        public static void AddActor(Actor actor){
-            for (Actor act: Actors) {
-                if(act.id == actor.id){
+
+        public static void AddActor(Actor actor) {
+            for (Actor act : Actors) {
+                if (act.id == actor.id) {
                     act = actor;
                     return;
                 }
@@ -32,14 +32,14 @@ public class Storage {
 
         public static void AddMovie(Movie movie) throws Exception {
             var arr = movie.cast.toArray();
-            for(int i = 0; i < movie.cast.size(); i++) {
+            for (int i = 0; i < movie.cast.size(); i++) {
                 int actorId = Integer.valueOf(arr[i].toString());
-                if(!ActorExists(actorId))
+                if (!ActorExists(actorId))
                     throw new Exception("ActorNotFound");
             }
 
-            for (Movie mve: Movies) {
-                if(mve.id == movie.id){
+            for (Movie mve : Movies) {
+                if (mve.id == movie.id) {
                     mve = movie;
                     return;
                 }
@@ -49,38 +49,38 @@ public class Storage {
 
         private static boolean ActorExists(int actorId) {
             for (Actor actor : Actors)
-                if(actor.id == actorId)
+                if (actor.id == actorId)
                     return true;
             return false;
         }
 
-        public static void AddUser(User user){
+        public static void AddUser(User user) {
             user.id = UserId++;
             Users.add(user);
         }
 
-        public static Movie getMovieById(int id){
+        public static Movie getMovieById(int id) {
             for (Movie mve : Movies)
-                if(mve.id == id)
+                if (mve.id == id)
                     return mve;
             return null;
 
         }
 
-        public static User getUserByEmail(String email){
+        public static User getUserByEmail(String email) {
             for (User user : Users)
-                if(user.email.equals(email))
+                if (user.email.equals(email))
                     return user;
             return null;
         }
 
-        public static void AddRateMovie(Rate rate) throws Exception{
-            if(rate.Score > 10 || rate.Score < 1)
+        public static void AddRateMovie(Rate rate) throws Exception {
+            if (rate.Score > 10 || rate.Score < 1)
                 throw new Exception("InvalidRateScore");
-            if(getUserByEmail(rate.UserEmail) == null)
+            if (getUserByEmail(rate.UserEmail) == null)
                 throw new Exception("UserNotFound");
             Movie movie = getMovieById(rate.MovieId);
-            if(movie == null)
+            if (movie == null)
                 throw new Exception("MovieNotFound");
             movie.RateMovie(rate);
         }
@@ -89,9 +89,9 @@ public class Storage {
             User user = getUserByEmail(watchList.UserEmail);
             Movie movie = getMovieById(watchList.MovieId);
             NotFoundExceptions(user, movie);
-            if(!user.canWatch(movie))
+            if (!user.canWatch(movie))
                 throw new Exception("AgeLimitError");
-            if(!user.addToWatchList(movie))
+            if (!user.addToWatchList(movie))
                 throw new Exception("MovieAlreadyExists");
 
         }
@@ -104,16 +104,16 @@ public class Storage {
         }
 
         public static void NotFoundExceptions(User user, Movie movie) throws Exception {
-            if(user == null)
+            if (user == null)
                 throw new Exception("UserNotFound");
-            if(movie == null)
+            if (movie == null)
                 throw new Exception("MovieNotFound");
 
         }
 
         public static void GetUserWatchList(String userEmail) throws Exception {
             User user = getUserByEmail(userEmail);
-            if(user == null)
+            if (user == null)
                 throw new Exception("UserNotFound");
             System.out.println("{\"data\":{\"WatchList\": " + Mapper.MapWatchList(user) + "}}");
         }
@@ -122,34 +122,36 @@ public class Storage {
             System.out.println("{\"data\":{\"MoviesListByGenre\": " + Mapper.MapGenreMovies(genre) + "}}");
         }
 
-        public static boolean MovieExists(int id){
-            for (Movie movie: Movies) {
-                if(movie.id == id)
-                    return true;
-            }
-            return false;
-        }
-        public static boolean UserExists(String email){
-            for (User user: Users) {
-                if(Objects.equals(user.email, email))
-                    return true;
-            }
-            return false;
-        }
-        public static boolean CommentExists(int id){
-            for (Comment comment: Comments) {
-                if(comment.Id == id)
+        public static boolean MovieExists(int id) {
+            for (Movie movie : Movies) {
+                if (movie.id == id)
                     return true;
             }
             return false;
         }
 
-        public static boolean AddComment(Comment comment){
-            if(!UserExists(comment.UserEmail)){
+        public static boolean UserExists(String email) {
+            for (User user : Users) {
+                if (Objects.equals(user.email, email))
+                    return true;
+            }
+            return false;
+        }
+
+        public static boolean CommentExists(int id) {
+            for (Comment comment : Comments) {
+                if (comment.Id == id)
+                    return true;
+            }
+            return false;
+        }
+
+        public static boolean AddComment(Comment comment) {
+            if (!UserExists(comment.UserEmail)) {
                 Response.CreateResponse(false, "UserNotFound");
                 return false;
             }
-            if(!MovieExists(comment.MovieId)){
+            if (!MovieExists(comment.MovieId)) {
                 Response.CreateResponse(false, "MovieNotFound");
                 return false;
             }
@@ -159,30 +161,31 @@ public class Storage {
             return true;
         }
 
-        public static void AddVote(Vote vote){
+        public static void AddVote(Vote vote) {
             Votes.add(vote);
-            for(Comment cm : Comments){
-                if(cm.Id == vote.CommentId){
-                    if(vote.Vote == 1)
+            for (Comment cm : Comments) {
+                if (cm.Id == vote.CommentId) {
+                    if (vote.Vote == 1)
                         cm.like += 1;
-                    if(vote.Vote == -1)
+                    if (vote.Vote == -1)
                         cm.dislike += 1;
                 }
             }
             Response.CreateResponse(true, "Vote Added Successfully");
         }
 
-        public static List<Movie> GetAllMovies(){
+        public static List<Movie> GetAllMovies() {
             return Movies;
         }
-        public static SingleMovieView GetMovie(int id){
+
+        public static SingleMovieView GetMovie(int id) {
             Movie movie = new Movie();
 
-            for (Movie mve: Movies) {
-                if(mve.id == id)
+            for (Movie mve : Movies) {
+                if (mve.id == id)
                     movie = mve;
             }
-            if(movie.id == -1){
+            if (movie.id == -1) {
                 Response.CreateResponse(false, "MovieNotFound");
                 return null;
             }
@@ -205,8 +208,8 @@ public class Storage {
 
         private static List<CastView> GetMovieCast(int id) {
             List<CastView> castViews = new ArrayList<CastView>();
-            for(Movie mve : Movies){
-                if(mve.id == id){
+            for (Movie mve : Movies) {
+                if (mve.id == id) {
                     castViews = GetCastView(mve.cast);
                 }
             }
@@ -216,21 +219,21 @@ public class Storage {
         private static ArrayList<CastView> GetCastView(ArrayList<Integer> castIds) {
             ArrayList<CastView> result = new ArrayList<CastView>();
             var arr = castIds.toArray();
-            for (int i = 0; i < castIds.size(); i++){
+            for (int i = 0; i < castIds.size(); i++) {
                 try {
                     Actor actor = GetActorById(Integer.valueOf(arr[i].toString()));
                     CastView cv = new CastView(actor.id, actor.name);
                     result.add(cv);
-                }catch (Exception ex){
+                } catch (Exception ex) {
                 }
 
             }
             return result;
         }
 
-        private static Actor GetActorById(Integer actorId) {
-            for(Actor actor : Actors){
-                if(actor.id == actorId)
+        public static Actor GetActorById(Integer actorId) {
+            for (Actor actor : Actors) {
+                if (actor.id == actorId)
                     return actor;
             }
             return null;
@@ -240,21 +243,35 @@ public class Storage {
         private static List<CommentView> GetMovieComments(int id) {
             List<CommentView> comments = new ArrayList<CommentView>();
 
-            for(Comment cm : Comments){
-                if(cm.MovieId == id)
+            for (Comment cm : Comments) {
+                if (cm.MovieId == id)
                     comments.add(new CommentView(cm));
             }
             return comments;
         }
 
-        public static int GetCommentLike(int commentId){
+        public static int GetCommentLike(int commentId) {
 
-            for (Comment comment: Comments) {
-                if(comment.Id == commentId)
+            for (Comment comment : Comments) {
+                if (comment.Id == commentId)
                     return comment.like;
             }
             return -1;
         }
-    }
 
+        public static ArrayList<Movie> GetTotalMovieActedIn(int actorId) {
+            ArrayList<Movie> movieList = new ArrayList<>();
+            for (Movie movie : Movies) {
+                var arr = movie.cast.toArray();
+                for (int i = 0; i < movie.cast.size(); i++) {
+                    if (Integer.valueOf(arr[i].toString()) == actorId){
+                        movieList.add(movie);
+                        break;
+                    }
+                }
+            }
+            return movieList;
+
+        }
+    }
 }
