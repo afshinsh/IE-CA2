@@ -1,6 +1,7 @@
 package Controllers;
 
 import Model.Movie;
+import Model.Rate;
 import Storage.Storage;
 import io.javalin.http.Context;
 import org.jsoup.Jsoup;
@@ -12,9 +13,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class MovieController {
+    private static int MovieId = 0;
 
-    public static void GetAllMovie(Context context) throws IOException {
-        List<Movie> movies = Storage.Database.GetAllMovies();
+    private static  String ListOfMovieToHtml(List<Movie> movies) throws IOException {
         File htmlResponse = new File("src\\main\\resources\\movies.html");
         Document doc = Jsoup.parse(htmlResponse, null);
         Element table = doc.getElementById("table");
@@ -27,19 +28,35 @@ public class MovieController {
             row += "<td>" + item.director + "</td>\n";
             row += "<td>" + item.writers + "</td>\n";
             row += "<td>" + item.genres + "</td>\n";
-            row += "<td>" + item.cast + "</td>\n";
+            var cast = Storage.Database.GetMovieCast(item.id);
+            String CastName = "";
+            for(int i = 0; i < cast.size(); i++){
+                CastName += " " + cast.get(i).Name;
+                if(i != cast.size() - 1)
+                    CastName += ",";
+
+            }
+            row += "<td>" + CastName + "</td>\n";
             row += "<td>" + item.imdbRate + "</td>\n";
             row += "<td>" + item.imdbRate + "</td>\n";
             row += "<td>" + item.duration + "</td>\n";
             row += "<td>" + item.ageLimit + "</td>\n";
             row += "<td><a href=\"/movies/" + item.id + "\"> link </a></td>\n</tr>\n";
             table.append(row);
+
         }
-        context.html(doc.toString());
+        return doc.toString();
+    }
+
+    public static void GetAllMovie(Context context) throws IOException {
+        List<Movie> movies = Storage.Database.GetAllMovies();
+        var response = ListOfMovieToHtml(movies);
+        context.html(response);
     }
 
     public static void GetMovieById(Context context) throws IOException {
         var movieId = context.pathParam("movie_id");
+        MovieId = Integer.parseInt(movieId);
         var result =  Storage.Database.GetMovie(Integer.parseInt(movieId));
 
         File htmlResponse = new File("src\\main\\resources\\movie.html");
@@ -53,7 +70,7 @@ public class MovieController {
         doc.getElementById("genres").append(String.valueOf(result.Genres));
         String CastName = "";
         for(int i = 0; i < result.Cast.size(); i++){
-            CastName +=  result.Cast.get(i).Name;
+            CastName += " " + result.Cast.get(i).Name;
             if(i != result.Cast.size() - 1)
                 CastName += ",";
 
@@ -100,5 +117,36 @@ public class MovieController {
         }
 
         context.html(doc.toString());
+    }
+
+    public static void RateMovie(Context context) {
+        var userId = context.pathParam("user_id");
+        var movieId = context.pathParam("movie_id");
+        var rate = context.pathParam("rate");
+
+        var userEmail = Storage.Database.getUserById(Integer.parseInt(userId)).email;
+
+        try {
+            Rate rating = new Rate(
+                    userEmail,
+                    Integer.valueOf(movieId),
+                    Integer.valueOf(rate));
+
+            Storage.Database.AddRateMovie(rating);
+            File htmlResponse = new File("src\\main\\resources\\200.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    public static void SearchMovieByYear(Context context) throws IOException {
+        var startDate = context.pathParam("start_year");
+        var endDate = context.pathParam("end_year");
+        List<Movie> movies = Storage.Database.GetMovieByYear(Integer.valueOf(startDate), Integer.valueOf(endDate));
+        var response = ListOfMovieToHtml(movies);
+        context.html(response);
     }
 }

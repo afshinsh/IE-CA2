@@ -52,13 +52,15 @@ public class Movie {
     }
 
     public void RateMovie(Rate rate){
-
+        if(rates == null)
+            rates = new ArrayList<>();
         for (Rate rt : rates)
             if(rt.UserEmail.equals(rate.UserEmail)){
                 updateRating(rt.Score, rate.Score);
                 rt = rate;
                 return;
             }
+
         rates.add(rate);
         rating = getRating();
     }

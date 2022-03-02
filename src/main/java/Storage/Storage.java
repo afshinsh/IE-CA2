@@ -73,6 +73,12 @@ public class Storage {
                     return user;
             return null;
         }
+        public static User getUserById(int id){
+            for (User user : Users)
+                if(user.id == id)
+                    return user;
+            return null;
+        }
 
         public static void AddRateMovie(Rate rate) throws Exception{
             if(rate.Score > 10 || rate.Score < 1)
@@ -203,7 +209,7 @@ public class Storage {
             return view;
         }
 
-        private static List<CastView> GetMovieCast(int id) {
+        public static List<CastView> GetMovieCast(int id) {
             List<CastView> castViews = new ArrayList<CastView>();
             for(Movie mve : Movies){
                 if(mve.id == id){
@@ -272,6 +278,23 @@ public class Storage {
             }
             return movieList;
 
+        }
+
+        public static void AssignIdToUsers(){
+            int i = 0;
+            for(User user : Users){
+                i++;
+                user.id = i;
+            }
+        }
+        public static List<Movie> GetMovieByYear(int startDate, int endDate){
+            List<Movie> movieList = new ArrayList<>();
+            for(Movie movie : Movies){
+                var year = movie.releaseDate.substring(0, 4);
+                if(Integer.valueOf(year) <= endDate && Integer.valueOf(year) >= startDate)
+                    movieList.add(movie);
+            }
+            return movieList;
         }
     }
 
