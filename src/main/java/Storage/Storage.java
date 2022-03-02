@@ -287,6 +287,14 @@ public class Storage {
                 user.id = i;
             }
         }
+
+        public static void AssignIdToCommnet(){
+            int i = 0;
+            for(Comment cm : Comments){
+                i++;
+                cm.id = i;
+            }
+        }
         public static List<Movie> GetMovieByYear(int startDate, int endDate){
             List<Movie> movieList = new ArrayList<>();
             for(Movie movie : Movies){

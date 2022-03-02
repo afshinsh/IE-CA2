@@ -1,7 +1,9 @@
 package Controllers;
 
+import Main.Response;
 import Model.Movie;
 import Model.Rate;
+import Model.Vote;
 import Storage.Storage;
 import io.javalin.http.Context;
 import org.jsoup.Jsoup;
@@ -89,26 +91,30 @@ public class MovieController {
 
             row += "<td>" + item.nickName + "</td>\n";
             row += "<td>" + item.Text + "</td>\n";
-            var like = "<form action=\"\" method=\"POST\">\n" +
+            var like = "<form action=\"/like\" method=\"POST\">\n" +
                     "            <label for=\"\">" + item.like +  "</label>\n" +
-                    "            <input\n" +
-                    "              id=\"form_comment_id\"\n" +
-                    "              type=\"hidden\"\n" +
-                    "              name=\"comment_id\"\n" +
-                    "              value= " + item.like + "\n" +
+                    "            <input " +
+                    "              id=\"form_comment_id\" " +
+                    "              type=\"hidden\" " +
+                    "              name=\"form_comment_id\"  " +
+                    "              value=\"" + item.Id + "\"" +
                     "            />\n" +
+                    "<label>Your ID:</label>\n" +
+                    "      <input type=\"text\" id = \"user_id\" name=\"user_id\" />" +
                     "            <button type=\"submit\">like</button>\n" +
                     "          </form>";
 
             row += "<td>" + like  + "</td>\n";
-            var dislike = "<form action=\"\" method=\"POST\">\n" +
+            var dislike = "<form action=\"/dislike\" method=\"POST\">\n" +
                     "            <label for=\"\">" + item.dislike +  "</label>\n" +
                     "            <input\n" +
                     "              id=\"form_comment_id\"\n" +
                     "              type=\"hidden\"\n" +
                     "              name=\"comment_id\"\n" +
-                    "              value=" + item.dislike + "\n" +
+                    "              value=\"" + item.Id + "\"\n" +
                     "            />\n" +
+                    "<label>Your ID:</label>\n" +
+                    "      <input type=\"text\" id = \"user_id\" name=\"user_id\"  />" +
                     "            <button type=\"submit\">dislike</button>\n" +
                     "          </form>";
             row += "<td>" + dislike  + "</td>\n";
@@ -142,11 +148,66 @@ public class MovieController {
 
     }
 
+    public static void RateMovieFromMoviePage(Context context) {
+        String quantity = context.formParam("quantity");
+        String user_id = context.formParam("user_id");
+        var userEmail = Storage.Database.getUserById(Integer.parseInt(user_id)).email;
+
+        try {
+            Rate rating = new Rate(
+                    userEmail,
+                    Integer.valueOf(MovieId),
+                    Integer.valueOf(quantity));
+
+            Storage.Database.AddRateMovie(rating);
+            File htmlResponse = new File("src\\main\\resources\\200.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
     public static void SearchMovieByYear(Context context) throws IOException {
         var startDate = context.pathParam("start_year");
         var endDate = context.pathParam("end_year");
         List<Movie> movies = Storage.Database.GetMovieByYear(Integer.valueOf(startDate), Integer.valueOf(endDate));
         var response = ListOfMovieToHtml(movies);
         context.html(response);
+    }
+
+
+    public static void LikeAComment(Context context) throws IOException {
+        String form_comment_id = context.formParam("form_comment_id");
+        String user_id = context.formParam("user_id");
+        var email = Storage.Database.getUserById(Integer.valueOf(user_id)).email;
+        try{
+
+            if(!Storage.Database.UserExists(email)){
+                File htmlResponse = new File("src\\main\\resources\\404.html");
+                Document doc = Jsoup.parse(htmlResponse, null);
+                context.html(doc.toString());
+            }
+
+            if(!Storage.Database.CommentExists(Integer.valueOf(form_comment_id))){
+                File htmlResponse = new File("src\\main\\resources\\403.html");
+                Document doc = Jsoup.parse(htmlResponse, null);
+                context.html(doc.toString());
+            }
+
+
+            Vote vote = new Vote(email, Integer.valueOf(form_comment_id), 1);
+            Storage.Database.AddVote(vote);
+            File htmlResponse = new File("src\\main\\resources\\200.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+
+        }
+        catch (Exception e){
+            File htmlResponse = new File("src\\main\\resources\\404.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+        }
     }
 }
