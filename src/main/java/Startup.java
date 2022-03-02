@@ -34,6 +34,7 @@ public class Startup {
         Storage.Database.Users =  objectMapper.readValue(userResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.AssignIdToUsers();
         Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});
+        Storage.Database.AssignIdToCommnet();
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
         app.get("/movies", MovieController::GetAllMovie);
@@ -47,8 +48,10 @@ public class Startup {
             ctx.result("success");
         });*/
         app.get("/rateMovie/{user_id}/{movie_id}/{rate}", MovieController::RateMovie);
+        app.post("/rateMovie", MovieController::RateMovieFromMoviePage);
         app.get("/movies/search/{start_year}/{end_year}", MovieController::SearchMovieByYear);
         app.get("/watchList/{user_id}", UserController::GetWatchList);
         app.post("/addWatchList", UserController::AddToWatchList);
+        app.post("/like", MovieController::LikeAComment);
     }
 }
