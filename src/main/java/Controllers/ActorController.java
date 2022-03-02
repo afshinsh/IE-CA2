@@ -32,6 +32,7 @@ public class ActorController {
         Element table = doc.getElementById("movie_table");
 
 
+
         for(var item:movieActedList){
             String row = "<tr>\n";
 

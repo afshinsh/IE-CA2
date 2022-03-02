@@ -1,5 +1,6 @@
 import Controllers.ActorController;
 import Controllers.MovieController;
+import Controllers.UserController;
 import Main.Commands.GetMoviesList;
 import Main.Main;
 import Storage.Storage;
@@ -33,12 +34,11 @@ public class Startup {
         Storage.Database.Users =  objectMapper.readValue(userResponse.getBody().toString(), new TypeReference<>(){});
         Storage.Database.AssignIdToUsers();
         Storage.Database.Comments = objectMapper.readValue(commentResponse.getBody().toString(), new TypeReference<>(){});
-        Storage.Database.AssignIdToCommnet();
         app.get("/", ctx -> ctx.result(String.valueOf(Storage.Database.Users.size())));
 
         app.get("/movies", MovieController::GetAllMovie);
         app.get("/movies/{movie_id}", MovieController::GetMovieById);
-       /* app.post("/rateMovie", ctx -> {
+        /*app.post("/rateMovie", ctx -> {
 
             String quantity = ctx.formParam("quantity");
             String user_id = ctx.formParam("user_id");
@@ -46,9 +46,9 @@ public class Startup {
             System.out.println("id: " + user_id);
             ctx.result("success");
         });*/
-        app.post("/rateMovie", MovieController::RateMovieFromMoviePage);
         app.get("/rateMovie/{user_id}/{movie_id}/{rate}", MovieController::RateMovie);
         app.get("/movies/search/{start_year}/{end_year}", MovieController::SearchMovieByYear);
-        app.post("/like", MovieController::LikeAComment);
+        app.get("/watchList/{user_id}", UserController::GetWatchList);
+        app.post("/addWatchList", UserController::AddToWatchList);
     }
 }

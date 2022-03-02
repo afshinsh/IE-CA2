@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class MovieController {
-    private static int MovieId = 0;
+    public static int MovieId = 0;
 
     private static  String ListOfMovieToHtml(List<Movie> movies) throws IOException {
         File htmlResponse = new File("src\\main\\resources\\movies.html");

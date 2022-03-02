@@ -16,7 +16,6 @@ public class GetMoviesByGenre {
         Object obj = JSONValue.parse(JsonInput);
         JSONObject jsonObject = (JSONObject) obj;
         try {
-
             String genre = (String) jsonObject.get("genre");
             try {
                 Storage.Database.GetMoviesByGenre(genre);

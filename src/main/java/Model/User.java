@@ -37,6 +37,8 @@ public class User {
     }
 
     public boolean addToWatchList(Movie movie) {
+        if(watchList == null)
+            watchList = new ArrayList<>();
         for (Movie mve : watchList)
             if(mve.id == movie.id)
                 return false;

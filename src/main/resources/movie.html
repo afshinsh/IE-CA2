@@ -31,18 +31,18 @@
       <li id="ageLimit">ageLimit: </li>
     </ul>
 
-
-
+    <label>Your ID:</label>
+    <input type="text" id = "user_id" name="user_id" value="" />
     <br><br>
     <form action="/rateMovie"  method="POST">
       <label>Rate(between 1 and 10):</label>
       <input type="number" id="quantity" name="quantity" min="1" max="10">
-      <label>Your ID:</label>
-      <input type="text" id = "user_id" name="user_id" value="" />
       <button type="submit">rate</button>
     </form>
     <br>
-    <form action="" method="POST">
+    <form action="/addWatchList" method="POST">
+      <label>Your ID:</label>
+      <input type="text" id = "user_id_wl" name="user_id_wl"  />
       <button type="submit">Add to WatchList</button>
     </form>
     <br />
