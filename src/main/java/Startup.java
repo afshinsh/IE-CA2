@@ -53,5 +53,6 @@ public class Startup {
         app.get("/watchList/{user_id}", UserController::GetWatchList);
         app.post("/addWatchList", UserController::AddToWatchList);
         app.post("/like", MovieController::LikeAComment);
+        app.post("/dislike", MovieController::Dislike);
     }
 }

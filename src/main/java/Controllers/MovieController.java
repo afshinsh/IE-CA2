@@ -60,7 +60,12 @@ public class MovieController {
         var movieId = context.pathParam("movie_id");
         MovieId = Integer.parseInt(movieId);
         var result =  Storage.Database.GetMovie(Integer.parseInt(movieId));
-
+        if(result == null){
+            File htmlResponse = new File("src\\main\\resources\\404.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+            return;
+        }
         File htmlResponse = new File("src\\main\\resources\\movie.html");
         Document doc = Jsoup.parse(htmlResponse, null);
 
@@ -79,7 +84,7 @@ public class MovieController {
         }
         doc.getElementById("cast").append(CastName);
         doc.getElementById("imdbRate").append(String.valueOf(result.ImdbRate));
-        doc.getElementById("rating").append(String.valueOf(result.ImdbRate));
+        doc.getElementById("rating").append(String.valueOf(result.Rating));
         doc.getElementById("duration").append(String.valueOf(result.Duration));
         doc.getElementById("ageLimit").append(String.valueOf(result.AgeLimit));
 
@@ -110,7 +115,7 @@ public class MovieController {
                     "            <input\n" +
                     "              id=\"form_comment_id\"\n" +
                     "              type=\"hidden\"\n" +
-                    "              name=\"comment_id\"\n" +
+                    "              name=\"form_comment_id\"\n" +
                     "              value=\"" + item.Id + "\"\n" +
                     "            />\n" +
                     "<label>Your ID:</label>\n" +
@@ -125,14 +130,20 @@ public class MovieController {
         context.html(doc.toString());
     }
 
-    public static void RateMovie(Context context) {
+    public static void RateMovie(Context context) throws IOException {
         var userId = context.pathParam("user_id");
         var movieId = context.pathParam("movie_id");
         var rate = context.pathParam("rate");
 
         var userEmail = Storage.Database.getUserById(Integer.parseInt(userId)).email;
-
+        if(Integer.valueOf(rate) > 10 || Integer.valueOf(rate) < 0){
+            File htmlResponse = new File("src\\main\\resources\\403.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+            return;
+        }
         try {
+
             Rate rating = new Rate(
                     userEmail,
                     Integer.valueOf(movieId),
@@ -148,7 +159,7 @@ public class MovieController {
 
     }
 
-    public static void RateMovieFromMoviePage(Context context) {
+    public static void RateMovieFromMoviePage(Context context) throws IOException {
         String quantity = context.formParam("quantity");
         String user_id = context.formParam("user_id");
         var userEmail = Storage.Database.getUserById(Integer.parseInt(user_id)).email;
@@ -196,7 +207,6 @@ public class MovieController {
                 context.html(doc.toString());
             }
 
-
             Vote vote = new Vote(email, Integer.valueOf(form_comment_id), 1);
             Storage.Database.AddVote(vote);
             File htmlResponse = new File("src\\main\\resources\\200.html");
@@ -210,4 +220,38 @@ public class MovieController {
             context.html(doc.toString());
         }
     }
+
+    public static void Dislike(Context context) throws IOException {
+        String form_comment_id = context.formParam("form_comment_id");
+        String user_id = context.formParam("user_id");
+        var email = Storage.Database.getUserById(Integer.valueOf(user_id)).email;
+        try{
+
+            if(!Storage.Database.UserExists(email)){
+                File htmlResponse = new File("src\\main\\resources\\404.html");
+                Document doc = Jsoup.parse(htmlResponse, null);
+                context.html(doc.toString());
+            }
+
+            if(!Storage.Database.CommentExists(Integer.valueOf(form_comment_id))){
+                File htmlResponse = new File("src\\main\\resources\\403.html");
+                Document doc = Jsoup.parse(htmlResponse, null);
+                context.html(doc.toString());
+            }
+
+
+            Vote vote = new Vote(email, Integer.valueOf(form_comment_id), -1);
+            Storage.Database.AddVote(vote);
+            File htmlResponse = new File("src\\main\\resources\\200.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+
+        }
+        catch (Exception e){
+            File htmlResponse = new File("src\\main\\resources\\404.html");
+            Document doc = Jsoup.parse(htmlResponse, null);
+            context.html(doc.toString());
+        }
+    }
+
 }

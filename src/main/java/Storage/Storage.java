@@ -201,6 +201,7 @@ public class Storage {
             view.Writers = movie.writers;
             view.Genres = movie.genres;
             view.ImdbRate = movie.imdbRate;
+            view.Rating = movie.rating;
             view.Duration = movie.duration;
             view.AgeLimit = movie.ageLimit;
             view.Comments = GetMovieComments(id);

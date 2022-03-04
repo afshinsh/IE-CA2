@@ -13,6 +13,7 @@ public class SingleMovieView {
     public ArrayList<String> Genres;
     public List<CastView> Cast;
     public double ImdbRate;
+    public double Rating;
     public long Duration;
     public int AgeLimit;
     public List<CommentView> Comments;
