@@ -254,4 +254,10 @@ public class MovieController {
         }
     }
 
+    public static void SearchByGenre(Context context) throws IOException {
+        var genre = context.pathParam("genre");
+        var moviesList = Storage.Database.GetMoviesListByGenre(genre);
+        var response = ListOfMovieToHtml(moviesList);
+        context.html(response);
+    }
 }

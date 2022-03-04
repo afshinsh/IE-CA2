@@ -54,5 +54,6 @@ public class Startup {
         app.post("/addWatchList", UserController::AddToWatchList);
         app.post("/like", MovieController::LikeAComment);
         app.post("/dislike", MovieController::Dislike);
+        app.get("/movies/search/{genre}", MovieController::SearchByGenre);
     }
 }

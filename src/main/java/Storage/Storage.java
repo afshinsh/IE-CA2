@@ -5,6 +5,7 @@ import Main.Response;
 import Model.*;
 import Views.CastView;
 import Views.CommentView;
+import Views.MovieListView;
 import Views.SingleMovieView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -91,6 +92,13 @@ public class Storage {
             movie.RateMovie(rate);
         }
 
+        public static int GetNumOfRates(int id){
+            for (Movie mve : Movies)
+                if(mve.id == id)
+                    return mve.rates.size();
+            return -1;
+        }
+
         public static void AddWatchList(WatchList watchList) throws Exception {
             User user = getUserByEmail(watchList.UserEmail);
             Movie movie = getMovieById(watchList.MovieId);
@@ -126,6 +134,14 @@ public class Storage {
 
         public static void GetMoviesByGenre(String genre) throws JsonProcessingException {
             System.out.println("{\"data\":{\"MoviesListByGenre\": " + Mapper.MapGenreMovies(genre) + "}}");
+        }
+        public static List<Movie> GetMoviesListByGenre(String genre){
+            List<Movie> list = new ArrayList<>();
+            for(Movie movie : Storage.Database.Movies)
+                if(movie.genres.contains(genre))
+                    list.add(movie);
+
+            return list;
         }
 
         public static boolean MovieExists(int id){
