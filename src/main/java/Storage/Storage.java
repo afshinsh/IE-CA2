@@ -307,7 +307,7 @@ public class Storage {
 
         public static void AssignIdToCommnet(){
             int i = 0;
-            for(Comment cm : Comments){
+                for(Comment cm : Comments){
                 i++;
                 cm.id = i;
             }
@@ -320,6 +320,11 @@ public class Storage {
                     movieList.add(movie);
             }
             return movieList;
+        }
+
+        public static void SetRatingForMovies() {
+            for(Movie movie : Movies)
+                movie.rating = movie.imdbRate;
         }
     }
 

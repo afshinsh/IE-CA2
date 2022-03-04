@@ -11,10 +11,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class UserController {
-
+    public static int CurrentUserId = 0;
     public static void GetWatchList(Context context) throws IOException {
         var userId = context.pathParam("user_id");
+
         var user = Storage.Database.getUserById(Integer.parseInt(userId));
+        CurrentUserId = user.id;
         if(user == null) {
             context.result("Not Found!");
             return;
@@ -42,8 +44,8 @@ public class UserController {
             row += "<td>" + item.rating + "</td>\n";
             row += "<td>" + item.duration + "</td>\n";
             row += "<td><a href=\"/movies/" + item.id + "\"> link </a></td>\n";
-            row += "<td>\n<form action=\"" + "removeWatchList" + "\" method=\"POST\" >\n" +
-                    "<input id=\"form_movie_id\" type=\"hidden\" name=\"movie_id\" value=\"" +
+            row += "<td>\n<form action=\"" + "/removeWatchList" + "\" method=\"POST\" >\n" +
+                    "<input id=\"form_movie_id\" type=\"hidden\" name=\"form_movie_id\" value=\"" +
                     item.id + "\">\n" + "<button type=\"submit\">Remove</button>\n</form>\n</td>\n</tr>\n";
             table.append(row);
 
@@ -58,7 +60,12 @@ public class UserController {
             context.result("Not Found!");
             return;
         }
-        int movie_Id = MovieController.MovieId;
+        int movie_Id;
+        String move_id = context.pathParam("movie_id");
+        if(move_id != null)
+            movie_Id = Integer.parseInt(move_id);
+        else
+            movie_Id = MovieController.MovieId;
         Movie movie = Storage.Database.getMovieById(movie_Id);
         if(movie == null) {
             context.result("Not Found!");
@@ -67,4 +74,13 @@ public class UserController {
         user.addToWatchList(movie);
         context.render("/200.html");
     }
-}
+
+    public static void RemoveFromWatchList(Context context) throws Exception {
+        var user = Storage.Database.getUserById(CurrentUserId);
+        String movie_id = context.formParam("form_movie_id");
+        var movie = Storage.Database.getMovieById(Integer.parseInt(movie_id));
+        user.RemoveFromWatchList(movie);
+        context.render("/200.html");
+    }
+
+    }
