@@ -22,6 +22,11 @@ public class ActorController {
 
         int actorId = Integer.parseInt(context.pathParam("actor_id"));
         Actor actor = Storage.Database.GetActorById(actorId);
+        if(actor == null){
+            context.render("/404.html");
+            return;
+        }
+
         ArrayList<Movie> movieActedList = Storage.Database.GetTotalMovieActedIn(actorId);
         File htmlResponse = new File("src\\main\\resources\\actor.html");
         Document doc = Jsoup.parse(htmlResponse, null);

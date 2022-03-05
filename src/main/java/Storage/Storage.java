@@ -201,7 +201,7 @@ public class Storage {
                     movie = mve;
             }
             if(movie.id == -1){
-                throw new Exception("MovieNotFound");
+                return  null;
             }
             SingleMovieView view = new SingleMovieView();
             view.Id = movie.id;

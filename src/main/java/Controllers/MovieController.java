@@ -60,9 +60,7 @@ public class MovieController {
         MovieId = Integer.parseInt(movieId);
         var result =  Storage.Database.GetMovie(Integer.parseInt(movieId));
         if(result == null){
-            File htmlResponse = new File("src\\main\\resources\\404.html");
-            Document doc = Jsoup.parse(htmlResponse, null);
-            context.html(doc.toString());
+           context.render("/404.html");
             return;
         }
         File htmlResponse = new File("src\\main\\resources\\movie.html");
@@ -149,9 +147,7 @@ public class MovieController {
                     Integer.valueOf(rate));
 
             Storage.Database.AddRateMovie(rating);
-            File htmlResponse = new File("src\\main\\resources\\200.html");
-            Document doc = Jsoup.parse(htmlResponse, null);
-            context.html(doc.toString());
+            context.render("/200.html");
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
@@ -170,9 +166,7 @@ public class MovieController {
                     Integer.valueOf(quantity));
 
             Storage.Database.AddRateMovie(rating);
-            File htmlResponse = new File("src\\main\\resources\\200.html");
-            Document doc = Jsoup.parse(htmlResponse, null);
-            context.html(doc.toString());
+            context.render("/200.html");
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }

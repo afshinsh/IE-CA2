@@ -57,7 +57,7 @@ public class UserController {
         String user_id = context.formParam("user_id_wl");
         var user = Storage.Database.getUserById(Integer.parseInt(user_id));
         if(user == null) {
-            context.result("Not Found!");
+            context.render("/404.html");
             return;
         }
         int movie_Id;
@@ -69,7 +69,7 @@ public class UserController {
         }
         Movie movie = Storage.Database.getMovieById(movie_Id);
         if(movie == null) {
-            context.result("Not Found!");
+            context.render("/404.html");
             return;
         }
         user.addToWatchList(movie);
@@ -80,6 +80,10 @@ public class UserController {
         var user = Storage.Database.getUserById(CurrentUserId);
         String movie_id = context.formParam("form_movie_id");
         var movie = Storage.Database.getMovieById(Integer.parseInt(movie_id));
+        if(user == null || movie == null) {
+            context.render("/404.html");
+            return;
+        }
         user.RemoveFromWatchList(movie);
         context.render("/200.html");
     }
