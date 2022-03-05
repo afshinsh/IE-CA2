@@ -1,8 +1,5 @@
-import Controllers.ActorController;
 import Controllers.MovieController;
 import Controllers.UserController;
-import Main.Commands.GetMoviesList;
-import Main.Main;
 import Storage.Storage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +14,6 @@ public class Startup {
 
     public static void main(String[] args) throws Exception {
         Javalin app = Javalin.create().start(7070);
-        Main.RunCore();
         HttpResponse <JsonNode> movieResponse = Unirest.get("http://138.197.181.131:5000/api/movies")
                 .asJson();
         HttpResponse <JsonNode> actorResponse = Unirest.get("http://138.197.181.131:5000/api/actors")

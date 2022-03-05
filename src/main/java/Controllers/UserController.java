@@ -61,11 +61,12 @@ public class UserController {
             return;
         }
         int movie_Id;
-        String move_id = context.pathParam("movie_id");
-        if(move_id != null)
-            movie_Id = Integer.parseInt(move_id);
-        else
+        try{
+            movie_Id = Integer.parseInt(context.pathParam("movie_id"));
+        }
+        catch (Exception e){
             movie_Id = MovieController.MovieId;
+        }
         Movie movie = Storage.Database.getMovieById(movie_Id);
         if(movie == null) {
             context.result("Not Found!");

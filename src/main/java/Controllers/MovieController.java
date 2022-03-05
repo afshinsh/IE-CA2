@@ -1,6 +1,5 @@
 package Controllers;
 
-import Main.Response;
 import Model.Movie;
 import Model.Rate;
 import Model.Vote;
@@ -56,7 +55,7 @@ public class MovieController {
         context.html(response);
     }
 
-    public static void GetMovieById(Context context) throws IOException {
+    public static void GetMovieById(Context context) throws Exception {
         var movieId = context.pathParam("movie_id");
         MovieId = Integer.parseInt(movieId);
         var result =  Storage.Database.GetMovie(Integer.parseInt(movieId));

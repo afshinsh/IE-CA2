@@ -1,11 +1,9 @@
 package Storage;
 
 import Main.Mapper;
-import Main.Response;
 import Model.*;
 import Views.CastView;
 import Views.CommentView;
-import Views.MovieListView;
 import Views.SingleMovieView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -166,20 +164,19 @@ public class Storage {
             return false;
         }
 
+
         public static boolean AddComment(Comment comment){
             if(!UserExists(comment.userEmail)){
-                Response.CreateResponse(false, "UserNotFound");
                 return false;
             }
             if(!MovieExists(comment.movieId)){
-                Response.CreateResponse(false, "MovieNotFound");
                 return false;
             }
             comment.id = CommentId++;
             Comments.add(comment);
-            Response.CreateResponse(true, "Comment Added Successfully");
             return true;
         }
+
 
         public static void AddVote(Vote vote){
             Votes.add(vote);
@@ -191,13 +188,12 @@ public class Storage {
                         cm.dislike += 1;
                 }
             }
-            Response.CreateResponse(true, "Vote Added Successfully");
         }
 
         public static List<Movie> GetAllMovies(){
             return Movies;
         }
-        public static SingleMovieView GetMovie(int id){
+        public static SingleMovieView GetMovie(int id) throws Exception {
             Movie movie = new Movie();
 
             for (Movie mve: Movies) {
@@ -205,8 +201,7 @@ public class Storage {
                     movie = mve;
             }
             if(movie.id == -1){
-                Response.CreateResponse(false, "MovieNotFound");
-                return null;
+                throw new Exception("MovieNotFound");
             }
             SingleMovieView view = new SingleMovieView();
             view.Id = movie.id;
@@ -302,6 +297,7 @@ public class Storage {
             for(User user : Users){
                 i++;
                 user.id = i;
+                user.watchList = new ArrayList<>();
             }
         }
 
