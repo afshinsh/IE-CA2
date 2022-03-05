@@ -45,6 +45,7 @@ public class Startup {
             app.post("/like", MovieController::LikeAComment);
             app.post("/dislike", MovieController::Dislike);
             app.get("/movies/search/{genre}", MovieController::SearchByGenre);
+            app.get("/voteComment/{user_id}/{comment_id}/{vote}", MovieController::VoteCommentFromUrl);
 
         }catch(Exception e){
             app.get("/Error", ctx -> ctx.result(e.getMessage()));

@@ -322,6 +322,14 @@ public class Storage {
             for(Movie movie : Movies)
                 movie.rating = movie.imdbRate;
         }
+
+        public static boolean UserIdIsValid(int userId){
+            for(User user : Users){
+                if(user.id == userId)
+                    return true;
+            }
+            return false;
+        }
     }
 
 }
