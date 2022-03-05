@@ -54,8 +54,16 @@ public class UserController {
     }
 
     public static void AddToWatchList(Context context) {
-        String user_id = context.formParam("user_id_wl");
-        var user = Storage.Database.getUserById(Integer.parseInt(user_id));
+        int user_id = 0;
+
+        try{
+            user_id = Integer.parseInt(context.pathParam("user_id"));
+        }catch (Exception e)
+        {
+            user_id = Integer.parseInt(context.formParam("user_id_wl"));
+        }
+        var user = Storage.Database.getUserById(user_id);
+
         if(user == null) {
             context.render("/404.html");
             return;
